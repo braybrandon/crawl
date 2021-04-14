@@ -1,3 +1,5 @@
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 <script>
   require.config({
     paths: { "game-{{ version }}": "/gamedata/{{ version }}" }
@@ -11,6 +13,7 @@
       client.uninhibit_messages();
     });
   });
+
 </script>
 <link rel="stylesheet" type="text/css" href="/gamedata/{{ version }}/style.css">
 <link rel="stylesheet" type="text/css" href="/gamedata/{{ version }}/simplebar.css">
@@ -105,6 +108,13 @@
       <canvas id="minimap_overlay"></canvas>
     </div>
     <div id="monster_list"></div>
+    <div><input href="#" data-toggle="tooltip" data-placement="top" title="Inventory" type="image" id="item" src="/gamedata/{{ version  }}/tab_label_item.png"></div>
+    <div><input type="image" href="#" data-toggle="tooltip" data-placement="top" title="Spells" type="image" id="item" src="/gamedata/{{ version  }}/tab_label_spell.png"></div>
+    <div><input type="image" href="#" data-toggle="tooltip" data-placement="top" title="Memorise" type="image" id="item" src="/gamedata/{{ version  }}/tab_label_memorise.png"></div>
+    <div><input type="image" href="#" data-toggle="tooltip" data-placement="top" title="Abilities" type="image" id="item" src="/gamedata/{{ version  }}/tab_label_ability.png"></div>
+    <div><input type="image" href="#" data-toggle="tooltip" data-placement="top" title="Skills" type="image" id="item" src="/gamedata/{{ version  }}/tab_label_skill.png"></div>
+    <div><input type="image" href="#" data-toggle="tooltip" data-placement="top" title="Meta commands" type="image" id="item" src="/gamedata/{{ version  }}/tab_label_metacommands.png"></div>
+    <div><input type="image" href="#" data-toggle="tooltip" data-placement="top" title="Navigation" type="image" id="item" src="/gamedata/{{ version  }}/tab_label_navigation.png"></div>
   </div>
   <div id="tooltip" style="display: none;"></div>
 </div>

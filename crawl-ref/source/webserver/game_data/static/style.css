@@ -17,6 +17,7 @@ body {
     position: absolute;
     right: 0px;
     top: 0px;
+    height: auto;
 }
 
 .colour_black { color: black; }
