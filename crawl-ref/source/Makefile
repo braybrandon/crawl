@@ -1232,6 +1232,9 @@ webserver/static/%.png: dat/tiles/%.png
 webserver/game_data/static/%.png: dat/tiles/%.png
 	$(QUIET_COPY)$(COPY) $< webserver/game_data/static/
 
+webserver/game_data/static/%.png: rltiles/gui/%.png
+	$(QUIET_COPY)$(COPY) $< webserver/game_data/static/
+
 TILEINFOJS = $(TILEIMAGEFILES) dngn
 TITLEIMGS = denzi_dragon denzi_kitchen_duty denzi_summoner \
             denzi_undead_warrior omndra_zot_demon firemage \
@@ -1245,10 +1248,14 @@ TITLEIMGS = denzi_dragon denzi_kitchen_duty denzi_summoner \
 	    froggy_goodgod_tengu_gold Cws_Minotauros nibiki_octopode \
 	    e_m_fields sastrei_chei anon_octopus_wizard
 
+GUIIMGS = tab_label_ability tab_label_item tab_label_memorise tab_label_metacommands \
+	  tab_label_navigation tab_label_skill tab_label_spell
+
 STATICFILES = $(TILEIMAGEFILES:%=webserver/game_data/static/%.png) \
               webserver/static/stone_soup_icon-32x32.png \
               $(TITLEIMGS:%=webserver/static/title_%.png) \
-              $(TILEINFOJS:%=webserver/game_data/static/tileinfo-%.js)
+              $(TILEINFOJS:%=webserver/game_data/static/tileinfo-%.js) \
+	      $(GUIIMGS:%=webserver/game_data/static/%.png)
 
 $(TILEINFOJS:%=$(RLTILES)/tileinfo-%.js): build-rltiles
 
