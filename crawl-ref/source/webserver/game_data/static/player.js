@@ -447,6 +447,10 @@ function ($, comm, enums, map_knowledge, messages, options, util) {
             $.extend(player.inv[i], data.inv[i]);
         }
         $.extend(player.equip, data.equip);
+
+	if(data.inv)
+	    $("#inventory").triggerHandler("update");
+
         delete data.equip;
         delete data.inv;
         delete data.msg;

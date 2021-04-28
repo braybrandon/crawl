@@ -1,6 +1,6 @@
 define(["jquery", "comm", "client", "./dungeon_renderer", "./display",
         "./minimap", "./enums", "./messages", "./options", "./text", "./menu",
-        "./player", "./mouse_control", "./ui", "./ui-layouts"],
+        "./inventory", "./player", "./mouse_control", "./ui", "./ui-layouts"],
 function ($, comm, client, dungeon_renderer, display, minimap, enums, messages,
           options) {
     "use strict";
@@ -127,6 +127,8 @@ function ($, comm, client, dungeon_renderer, display, minimap, enums, messages,
                 messages.hide();
             }
 
+	    $("#inventory").hide();
+
             dungeon_renderer.fit_to(width, height, show_diameter);
         }
         else
@@ -135,6 +137,7 @@ function ($, comm, client, dungeon_renderer, display, minimap, enums, messages,
                                     layout_parameters.remaining_height,
                                     show_diameter);
             $("#right_column").show();
+	    $("#inventory").show();
             messages.show();
         }
         minimap.stop_minimap_farview();
@@ -253,6 +256,7 @@ function ($, comm, client, dungeon_renderer, display, minimap, enums, messages,
                 var params = $.extend({}, layout_parameters);
                 layout(params);
             }
+	    $("#inventory").triggerHandler("update");
         });
     });
 

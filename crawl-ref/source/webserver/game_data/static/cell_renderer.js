@@ -1198,6 +1198,7 @@ function ($, view_data, main, tileinfo_player, icons, dngn, enums,
                 img_scale);
         },
 
+
         draw_from_texture: function (idx, x, y, tex, ofsx, ofsy, y_max, centre, img_scale)
         {
             var mod = tileinfos(tex);
