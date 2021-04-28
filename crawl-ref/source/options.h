@@ -283,6 +283,13 @@ public:
     bool        cloud_status;     // Whether to show a cloud status light
     bool        always_show_zot;  // Whether to always show the Zot timer
 
+#ifdef USE_TILE_WEB
+    vector<object_class_type> consumables_panel;
+    vector<text_pattern> consumables_panel_filter;
+    bool show_unidentified_consumables;
+    int consumables_panel_scale;
+#endif
+
     int         fire_items_start; // index of first item for fire command
     vector<unsigned> fire_order;  // missile search order for 'f' command
     bool        launcher_autoquiver; // whether to autoquiver launcher ammo on wield
