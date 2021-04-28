@@ -1184,9 +1184,15 @@ void game_options::reset_options()
     tile_display_mode = "tiles";
 
     consumables_panel.clear();
+    consumables_panel.emplace_back(OBJ_WEAPONS);
+    consumables_panel.emplace_back(OBJ_MISSILES);
+    consumables_panel.emplace_back(OBJ_ARMOUR);
     consumables_panel.emplace_back(OBJ_SCROLLS);
     consumables_panel.emplace_back(OBJ_POTIONS);
+    consumables_panel.emplace_back(OBJ_WANDS);
+    consumables_panel.emplace_back(OBJ_STAVES);
     consumables_panel.emplace_back(OBJ_MISCELLANY);
+    consumables_panel.emplace_back(OBJ_GOLD);
 
     consumables_panel_scale = 100;
 #endif
@@ -2701,10 +2707,10 @@ void game_options::read_option_line(const string &str, bool runscript)
         && key != "item_slot"
         && key != "ability_slot"
         && key != "sound" && key != "hold_sound" && key != "sound_file_path"
-        && key.find("font") == string::npos)
 #ifdef USE_TILE_WEB
 	&& key != "consumables_panel_filter"
 #endif
+        && key.find("font") == string::npos)
     {
         lowercase(field);
     }
@@ -3636,7 +3642,7 @@ void game_options::read_option_line(const string &str, bool runscript)
 #ifdef USE_TILE_WEB
     else if (key == "consumables_panel")
     {
-	consumables.panel.clear();
+	consumables_panel.clear();
 
 	char32_t c;
 	for (const char* tp = field.c_str(); int s = utf8towc(&c, tp); tp += s)

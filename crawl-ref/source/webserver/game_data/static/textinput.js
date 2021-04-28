@@ -26,7 +26,7 @@ function ($, comm, client, enums, util, options, ui) {
 
     function display_input()
     {
-        var input = $("<input class='text' type='text'>");
+        var input = $("<input id='logan' class='text' type='text'>");
         var prompt = input_data.prompt; // may be null
 
         var history;

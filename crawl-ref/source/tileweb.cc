@@ -1112,8 +1112,7 @@ static bool _is_useful_consumable(const item_def &item, const string &name)
 	if (item.quantity < 1
 		|| base_types.empty()
 		|| std::find(base_types.begin(), base_types.end(), item.base_type)
-			== base_types.end()
-		|| (!Options.show_unidentified_consumables && !fully_identified(item)))
+			== base_types.end())
 	{
 		return false;
 	}

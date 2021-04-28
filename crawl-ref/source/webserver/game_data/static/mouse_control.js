@@ -1,6 +1,6 @@
-define(["jquery", "comm", "./dungeon_renderer", "./tileinfo-gui", "./map_knowledge",
+define(["jquery", "comm", "./dungeon_renderer", "./tileinfo-gui", "./player", "./map_knowledge",
         "./enums"],
-function ($, comm, dr, gui, map_knowledge, enums) {
+function ($, comm, dr, gui, player, map_knowledge, enums) {
     function handle_cell_click(ev)
     {
         if (ev.which == 1) // Left click
@@ -43,6 +43,31 @@ function ($, comm, dr, gui, map_knowledge, enums) {
             $("#dungeon")
                 .on("cell_click", handle_cell_click)
                 .on("cell_tooltip", handle_cell_tooltip);
+	    $("#inventory").click (function(ev){
+		var filtered_inv = Object.values(player.inv).filter(function(item) {
+		    if(!item.quantity) {
+			return false
+		    }
+		    else if (item.hasOwnProperty("qty_field" && item.qty_field))
+			return true;
+		});
+		var inventory = Object.values(player.inv);
+
+		filtered_inv.sort(function(a, b) {
+		
+			if(a.base_type === b.base_type)
+				return a.sub_type - b.sub_type;
+
+			return a.base_type - b.base_type;
+
+		});
+		var i = Math.floor((ev.pageX - $(this).offset().left) / 32);
+		//comm.send_message("key", { keycode: 63 });
+		//comm.send_message("key", { keycode: 47 });
+		comm.send_message("item", inventory[0]);
+		$("#logan").val("rapier");
+		alert("Get off of me! x: " + ev.pageX + "   y: " + ev.pageY + " item: " + inventory[0].name);
+	    });
         });
     $(window)
         .off("mouseup.mouse_control mousemove.mouse_control mousedown.mouse_control")

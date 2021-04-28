@@ -1621,7 +1621,7 @@ always_show_zot = false
         Whether to show the "Zot" status light at all times, even when you've
         got plenty of time left.
 
-consumables_panel = ?!}
+consumables_panel = ()[?!/="|:}$
 	The above is the default list of items to show on the consumables panel.
 	The valid symbols are
 	?	Scrolls
@@ -1641,7 +1641,7 @@ show_unidentified_consumables = false
 	When set to true, the consumables panel will show unidentified scrolls
 	and potions.
 
-consumables_panel_scale = 1.0
+consumables_panel_scale = 0.5
 	A scale factor to apply the consumables panel.
 
 3-i     Colours (messages and menus)

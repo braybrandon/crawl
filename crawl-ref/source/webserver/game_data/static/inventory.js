@@ -10,7 +10,7 @@ function ($, cr, enums, options, player, icons, util) {
 
 	$(document).bind("game_init", function() {
 		$canvas = $("#inventory");
-		renderer - new cr.DungeonCellRenderer();
+		renderer = new cr.DungeonCellRenderer();
 		borders_width = (parseInt($canvas.css("border-left-width"), 10) || 0) * 2;
 		$canvas.on("update", update);
 	});
@@ -33,11 +33,12 @@ function ($, cr, enums, options, player, icons, util) {
 
 		});
 
-		var required_length = renderer.cell_width * filtered_inv.lenght;
+		var cell_length = renderer.cell_width;
+		var required_length = renderer.cell_width * filtered_inv.length;
 		var available_length = $("#dungeon").width();
 
 		available_length -= borders_width;
-		var max_cells = Math.floor(available_length / cell_length);
+		var max_cells = Math.floor(available_length / renderer.cell_width);
 		var panel_length = Math.min(required_length, available_length);
 
 		util.init_canvas($canvas[0], panel_length, renderer.cell_height);
@@ -48,7 +49,7 @@ function ($, cr, enums, options, player, icons, util) {
 
 		filtered_inv.slice(0, max_cells).forEach(function(item, idx) {
 			
-			var offset = clee_length * idx;
+			var offset = cell_length * idx;
 			item.tile.forEach(function(tile) {
 
 				renderer.draw_main(tile, offset, 0, scale); 
