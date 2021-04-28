@@ -25,6 +25,7 @@
 #include "env.h"
 #include "files.h"
 #include "item-name.h"
+#include "item-prop.h"
 #include "json.h"
 #include "json-wrapper.h"
 #include "lang-fake.h"
@@ -1104,10 +1105,41 @@ void TilesFramework::_send_player(bool force_full)
     finish_message();
 }
 
+static bool _is_useful_consumable(const item_def &item, const string &name)
+{
+	const vector<object_class_type> &base_types = Options.consumables_panel;
+
+	if (item.quantity < 1
+		|| base_types.empty()
+		|| std::find(base_types.begin(), base_types.end(), item.base_type)
+			== base_types.end()
+		|| (!Options.show_unidentified_consumables && !fully_identified(item)))
+	{
+		return false;
+	}
+
+	for (const text_pattern &p : Options.consumables_panel_filter)
+		if (p.matches(name))
+			return false;
+	return true;
+}
+
+static string _qty_field_name(const item_def &item)
+{
+	if (item.base_type == OBJ_MISCELLANY && item.sub_type != MISC_ZIGGURAT
+		|| item.base_type == OBJ_WANDS)
+	{
+		return "plus";
+	}
+	else
+		return "quantity";
+}
+
 void TilesFramework::_send_item(item_def& current, const item_def& next,
                                 bool force_full)
 {
     bool changed = false;
+    bool xp_evoker_changed = false;
     bool defined = next.defined();
 
     if (force_full || current.base_type != next.base_type)
@@ -1129,8 +1161,19 @@ void TilesFramework::_send_item(item_def& current, const item_def& next,
 
     changed |= _update_int(force_full, current.sub_type, next.sub_type,
                            "sub_type", false);
-    changed |= _update_int(force_full, current.plus, next.plus,
-                           "plus", false);
+    if (is_xp_evoker(next))
+    {
+	    short int next_charges = evoker_charges(next.sub_type);
+	    xp_evoker_changed = _update_int(force_full, current.plus,
+			    next_charges,
+			    "plus", false);
+	    changed |= xp_evoker_changed;
+    }
+    else
+    {
+	    changed |= _update_int(force_full, current.plus, next.plus,
+			    "plus", false);
+    }
     changed |= _update_int(force_full, current.plus2, next.plus2,
                            "plus2", false);
     changed |= _update_int(force_full, current.flags, next.flags,
@@ -1146,8 +1189,16 @@ void TilesFramework::_send_item(item_def& current, const item_def& next,
     if (changed && defined)
     {
         string name = next.name(DESC_A, true, false, true);
-        if (force_full || current.name(DESC_A, true, false, true) != name)
+	if (force_full || current.name(DESC_A, true, false, true) != name
+		|| xp_evoker_changed)
+	{
             json_write_string("name", name);
+	}
+	
+	json_write_string("qty_field",
+			_is_useful_consumable(next, name)
+			? _qty_field_name(next)
+			: "");
 
         const string prefix = item_prefix(next);
         const int prefcol = menu_colour(next.name(DESC_INVENTORY), prefix);
@@ -1163,7 +1214,7 @@ void TilesFramework::_send_item(item_def& current, const item_def& next,
         }
 
         tileidx_t tile = tileidx_item(next);
-        if (force_full || tileidx_item(current) != tile)
+        if (force_full || tileidx_item(current) != tile || xp_evoker_changed)
         {
             json_open_array("tile");
             tileidx_t base_tile = tileidx_known_base_item(tile);
@@ -1174,6 +1225,8 @@ void TilesFramework::_send_item(item_def& current, const item_def& next,
         }
 
         current = next;
+	if (is_xp_evoker(current))
+		current.plus = evoker_charges(current.sub_type);
     }
 }
 
