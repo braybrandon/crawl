@@ -73,14 +73,15 @@ function ($, comm, dr, gui, player, map_knowledge, enums, ui) {
 			    item = index - 25 + "A".charCodeAt(0);
 		if(ev.which == 1) {
 		    if (index <= filtered_inv.length) {
-		        comm.send_message("key", { keycode: 63 });
-		    	comm.send_message("key", { keycode: 47 });
-		    	$.when(comm.send_message("key", { keycode: 73 })).then(function(){
-			$("#logan").val("+0 rapier");
-			});
+		        comm.send_message("describe-inventory", { keycode: index });
+		    //	comm.send_message("key", { keycode: 47 });
+		    ////	$.when(comm.send_message("key", { keycode: 73 })).then(function(){
+		//	$("#logan").val("+0 rapier");
+		//	});
 		        //comm.send_message("key", { keycode: 105 });
 		    	//comm.send_message("key", { keycode: item });
 			//comm.send_message("key", { keycode: 119 });
+			//alert(inventory[1].name + " " + inventory[1].col);
 		    }
 		}else if(ev.which == 3) {
 		    if (index <= filtered_inv.length) {

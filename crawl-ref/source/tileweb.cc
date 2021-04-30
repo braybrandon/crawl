@@ -3,6 +3,7 @@
 #ifdef USE_TILE_WEB
 
 #include "tileweb.h"
+#include "invent.h"
 
 #include <cerrno>
 #include <cstdarg>
@@ -21,6 +22,7 @@
 #include "coord.h"
 #include "database.h"
 #include "directn.h"
+#include "describe.h"
 #include "english.h"
 #include "env.h"
 #include "files.h"
@@ -377,6 +379,14 @@ wint_t TilesFramework::_handle_control_message(sockaddr_un addr, string data)
         m_dest_addrs.push_back(addr);
         m_controlled_from_web = primary->bool_;
     }
+    else if (msgtype == "describe-inventory") 
+	    {
+		JsonWrapper index = json_find_member(obj.node, "keycode");
+		index.check(JSON_NUMBER);
+
+		describe_item(you.inv[(int) index->number_]);
+
+	    }
     else if (msgtype == "key")
     {
         JsonWrapper keycode = json_find_member(obj.node, "keycode");
