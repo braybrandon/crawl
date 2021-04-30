@@ -1343,8 +1343,6 @@ body {
 
 #inventory { 
     position: absolute;
-    left: 0px;
-    top: 0px;
     border: 2px solid #7d623c;
     border-radius: 3px;
 }

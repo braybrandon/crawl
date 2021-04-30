@@ -24,35 +24,38 @@ function ($, cr, enums, options, player, icons, util) {
 				return true;
 		});
 
-		filtered_inv.sort(function(a, b) {
+		/*filtered_inv.sort(function(a, b) {
 		
 			if(a.base_type === b.base_type)
 				return a.sub_type - b.sub_type;
 
 			return a.base_type - b.base_type;
 
-		});
+		});*/
 
 		var cell_length = renderer.cell_width;
-		var required_length = renderer.cell_width * filtered_inv.length;
-		var available_length = $("#dungeon").width();
+		var panel_length = renderer.cell_width * 13;
 
-		available_length -= borders_width;
-		var max_cells = Math.floor(available_length / renderer.cell_width);
-		var panel_length = Math.min(required_length, available_length);
 
-		util.init_canvas($canvas[0], panel_length, renderer.cell_height);
+		util.init_canvas($canvas[0], panel_length, renderer.cell_height * 4);
 		renderer.init($canvas[0]);
 
-		renderer.ctx.fillStyle = "black";
-		renderer.ctx.fillRect(0, 0, panel_length, renderer.cell_height);
-
-		filtered_inv.slice(0, max_cells).forEach(function(item, idx) {
-			
-			var offset = cell_length * idx;
+		renderer.ctx.fillStyle = "green";
+		renderer.ctx.fillRect(0, 0, panel_length, renderer.cell_height*4);
+		filtered_inv.slice(0, filtered_inv.length).forEach(function(item, idx) {
+		
+			var i = idx % 13;
+			var offset = cell_length * i;
+			var yoffset = 0;
+			if(idx > 12 && idx < 26)
+				yoffset = renderer.cell_height * 1;
+			else if ( idx > 25 && idx < 39)
+				yoffset = renderer.cell_height * 2;
+			else if ( idx > 38 && idx < 52)
+				yoffset = renderer.cell_height * 3;
 			item.tile.forEach(function(tile) {
 
-				renderer.draw_main(tile, offset, 0, scale); 
+				renderer.draw_main(tile, offset, yoffset, scale); 
 
 			});
 
