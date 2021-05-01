@@ -17,6 +17,7 @@
 #endif
 
 #include "artefact.h"
+#include "adjust.h"
 #include "branch.h"
 #include "command.h"
 #include "coord.h"
@@ -26,6 +27,7 @@
 #include "english.h"
 #include "env.h"
 #include "files.h"
+#include "items.h"
 #include "item-name.h"
 #include "item-prop.h"
 #include "json.h"
@@ -387,6 +389,15 @@ wint_t TilesFramework::_handle_control_message(sockaddr_un addr, string data)
 		describe_item(you.inv[(int) index->number_]);
 
 	    }
+    else if (msgtype == "drop") {
+	JsonWrapper index = json_find_member(obj.node, "keycode");
+	index.check(JSON_NUMBER);
+	JsonWrapper size = json_find_member(obj.node, "size");
+	size.check(JSON_NUMBER);
+	//drop();
+	drop_item((int) index->number_, you.inv[(int) index->number_].quantity);
+	//you.inv[(int) index->number_].clear();
+    }
     else if (msgtype == "key")
     {
         JsonWrapper keycode = json_find_member(obj.node, "keycode");
@@ -1157,6 +1168,9 @@ void TilesFramework::_send_item(item_def& current, const item_def& next,
         json_write_int("base_type", next.base_type);
     }
 
+    json_write_int("slot", current.slot);
+    json_write_bool("is_equipped", item_is_equipped(current, false));
+
     changed |= _update_int(force_full, current.quantity, next.quantity,
                            "quantity", false);
 
@@ -1203,6 +1217,8 @@ void TilesFramework::_send_item(item_def& current, const item_def& next,
 	{
             json_write_string("name", name);
 	}
+
+	json_write_int("qty", current.quantity);
 	
 	json_write_string("qty_field",
 			_is_useful_consumable(next, name)

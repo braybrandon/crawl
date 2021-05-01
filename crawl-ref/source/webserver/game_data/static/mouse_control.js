@@ -1,6 +1,6 @@
-define(["jquery", "comm", "./dungeon_renderer", "./tileinfo-gui", "./player", "./map_knowledge",
+define(["jquery", "comm", "./cell_renderer", "./dungeon_renderer","./inventory", "./tileinfo-gui", "./tileinfo-icons", "./player", "./map_knowledge",
         "./enums", "./ui-layouts"],
-function ($, comm, dr, gui, player, map_knowledge, enums, ui) {
+function ($, comm, cr, dr, inventory, gui, icons, player, map_knowledge, enums, ui) {
     function handle_cell_click(ev)
     {
         if (ev.which == 1) // Left click
@@ -12,6 +12,10 @@ function ($, comm, dr, gui, player, map_knowledge, enums, ui) {
         }
         else if (ev.which == 3) // Right click
         {
+            comm.send_message("click_travel", {
+                x: ev.cell.x,
+                y: ev.cell.y
+            });
         }
     }
 
@@ -46,52 +50,53 @@ function ($, comm, dr, gui, player, map_knowledge, enums, ui) {
 	    $('#inventory').bind('contextmenu', function(e){
 		    return false;
 	    });
-	    $("#inventory").click (function(ev){
-		var filtered_inv = Object.values(player.inv).filter(function(item) {
-		    if(!item.quantity) {
-			return false
-		    }
-		    else if (item.hasOwnProperty("qty_field" && item.qty_field))
-			return true;
-		});
-		var inventory = Object.values(player.inv);
-
-		filtered_inv.sort(function(a, b) {
-		
-			if(a.base_type === b.base_type)
-				return a.sub_type - b.sub_type;
-
-			return a.base_type - b.base_type;
-
-		});
+	    $("#inventory").on("mouseup", function(ev){
 		
 		var x = Math.floor((ev.pageX - $(this).offset().left) / 32);
 		var y = Math.floor((ev.pageY - $(this).offset().top) / 32);
-		var index = x + y * 13;
-		var item = index + "a".charCodeAt(0);
-		    if (index > 25) 
-			    item = index - 25 + "A".charCodeAt(0);
+		var index = x + y * 10;
+		var filtered_inv = Object.values(player.inv).filter(function(item) {
+		    if(!item.quantity) { 
+			return false;
+		    }
+			else if (item.hasOwnProperty("qty_field" && item.qty_field))
+				return true
+		    
+		});
+			filtered_inv.sort(function(a,b) {
+				if(a.base_type === b.base_type)
+					return a.sub_type - b.sub_type;
+				return a.base_type - b.base_type;
+			});
+
+		if(filtered_inv[index] != null)
+			var slot = filtered_inv[index].slot - 97;
 		if(ev.which == 1) {
-		    if (index <= filtered_inv.length) {
-		        comm.send_message("describe-inventory", { keycode: index });
-		    //	comm.send_message("key", { keycode: 47 });
-		    ////	$.when(comm.send_message("key", { keycode: 73 })).then(function(){
-		//	$("#logan").val("+0 rapier");
-		//	});
-		        //comm.send_message("key", { keycode: 105 });
-		    	//comm.send_message("key", { keycode: item });
-			//comm.send_message("key", { keycode: 119 });
-			//alert(inventory[1].name + " " + inventory[1].col);
-		    }
-		}else if(ev.which == 3) {
-		    if (index <= filtered_inv.length) {
-		        comm.send_message("key", { keycode: 105 });
-		    	comm.send_message("key", { keycode: item });
-			comm.send_message("key", { keycode: 100 });
-			ev.preventDefault();
-		    }
+			    if(ev.shiftKey) {
+				if(filtered_inv[index] != null) {
+		        		comm.send_message("drop", { keycode: slot, size: 0 });
+					comm.send_message("input", { text: "." });
+				}
+			    }
+			else {
+			}
+
+		}
+		else if(ev.which == 3) {
+
+		        comm.send_message("describe-inventory", { keycode: slot });
 		}
 	    });
+		$("#inventory").on("mousemove", function(ev) {
+			var x = Math.floor((ev.pageX - $(this).offset().left) / 32);
+			var y = Math.floor((ev.pageY - $(this).offset().top) / 32);
+			var $canvas = $("#inventory");
+			var renderer = new cr.DungeonCellRenderer();
+			renderer.init($canvas[0]);
+			$("#inventory").triggerHandler("update");
+			renderer.draw_icon(icons.CURSOR, x * 32, y * 32);
+			
+		});
         });
     $(window)
         .off("mouseup.mouse_control mousemove.mouse_control mousedown.mouse_control")

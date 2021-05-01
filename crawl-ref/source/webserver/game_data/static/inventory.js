@@ -24,45 +24,53 @@ function ($, cr, enums, options, player, icons, util) {
 				return true;
 		});
 
-		/*filtered_inv.sort(function(a, b) {
+		filtered_inv.sort(function(a, b) {
 		
 			if(a.base_type === b.base_type)
 				return a.sub_type - b.sub_type;
 
 			return a.base_type - b.base_type;
 
-		});*/
+		});
 
 		var cell_length = renderer.cell_width;
-		var panel_length = renderer.cell_width * 13;
+		var panel_length = renderer.cell_width * 10;
 
 
-		util.init_canvas($canvas[0], panel_length, renderer.cell_height * 4);
+		util.init_canvas($canvas[0], panel_length, renderer.cell_height * 6);
 		renderer.init($canvas[0]);
 
-		renderer.ctx.fillStyle = "green";
-		renderer.ctx.fillRect(0, 0, panel_length, renderer.cell_height*4);
+		renderer.ctx.fillStyle = "black";
+		renderer.ctx.fillRect(0, 0, panel_length, renderer.cell_height*6);
 		filtered_inv.slice(0, filtered_inv.length).forEach(function(item, idx) {
 		
-			var i = idx % 13;
+			var i = idx % 10;
 			var offset = cell_length * i;
 			var yoffset = 0;
-			if(idx > 12 && idx < 26)
+			if(idx > 9 && idx < 20)
 				yoffset = renderer.cell_height * 1;
-			else if ( idx > 25 && idx < 39)
+			else if ( idx > 19 && idx < 30)
 				yoffset = renderer.cell_height * 2;
-			else if ( idx > 38 && idx < 52)
+			else if ( idx > 29 && idx < 40)
 				yoffset = renderer.cell_height * 3;
+			else if ( idx > 39 && idx < 50)
+				yoffset = renderer.cell_height * 4;
+			else if ( idx > 49 && idx < 60)
+				yoffset = renderer.cell_height * 5;
 			item.tile.forEach(function(tile) {
-
+				if(item.is_equipped) {
+					renderer.ctx.fillStyle = "green";
+					renderer.ctx.fillRect(offset, yoffset, 32, 32);
+				}
 				renderer.draw_main(tile, offset, yoffset, scale); 
 
 			});
 
 		});
-
-		$canvas.removeClass("empty");
+		//$canvas.removeClass("empty");
+		
 	}
+
 
 	options.add_listener(function() {
 		var update_required = false;
