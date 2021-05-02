@@ -30,6 +30,7 @@
 #include "items.h"
 #include "item-name.h"
 #include "item-prop.h"
+#include "item-use.h"
 #include "json.h"
 #include "json-wrapper.h"
 #include "lang-fake.h"
@@ -397,6 +398,61 @@ wint_t TilesFramework::_handle_control_message(sockaddr_un addr, string data)
 	//drop();
 	drop_item((int) index->number_, you.inv[(int) index->number_].quantity);
 	//you.inv[(int) index->number_].clear();
+    }
+    else if (msgtype == "equip")
+    {
+	    JsonWrapper item_slot_code = json_find_member(obj.node, "keycode");
+	    item_slot_code.check(JSON_NUMBER);
+
+	    int item_slot = (int) item_slot_code->number_;
+	    const item_def &item = you.inv[item_slot];
+	    equipment_type slot = get_item_slot(item);
+	    bool equipped_slot = item_is_equipped(item, true);
+
+	    if (item.base_type == OBJ_POTIONS)
+	    {
+		    item_def *potion;
+		    potion = &you.inv[item_slot];
+		    drink(potion);
+	    }
+	    else if (item.base_type == OBJ_SCROLLS)
+	    {
+		    item_def *scroll;
+		    scroll = &you.inv[item_slot];
+		    read(scroll);
+	    }
+	    else if (item.base_type == OBJ_MISSILES)
+	    {
+		    ;
+	    }
+	    else
+	    {
+		    bool flag = false;
+		    int pos = 0;
+		    for (size_t i = 0; i < you.inv.size(); i++)
+		    {
+			    if (you.inv[i].base_type == item.base_type)
+			    {
+				    flag = true;
+				    pos = i;
+			    }
+		    }
+		    if (!equipped_slot && flag)
+		    {
+			    const item_def &old_item = you.inv[pos];
+			    equipment_type old_slot = get_item_slot(old_item);
+			    unequip_item(old_slot, false, true);
+			    equip_item(slot, item_slot, true);
+		    }
+		    else if (!equipped_slot && !flag)
+		    {
+			    equip_item(slot, item_slot, true);
+		    }
+		    else
+		    {
+			    unequip_item(slot, false, true);
+		    }
+	    }
     }
     else if (msgtype == "key")
     {

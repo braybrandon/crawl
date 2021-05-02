@@ -79,6 +79,8 @@ function ($, comm, cr, dr, inventory, gui, icons, player, map_knowledge, enums, 
 				}
 			    }
 			else {
+				comm.send_message("equip", { keycode: slot });
+				comm.send_message("input", { text: "." });
 			}
 
 		}
